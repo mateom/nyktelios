@@ -1,0 +1,5 @@
+; $Id$
+name = Nightly builder
+description = A block module that displays and controls nightly builds.
+core = 6.x
+package = Developing

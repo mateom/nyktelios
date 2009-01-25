@@ -1,0 +1,88 @@
+<?php
+/**
+* Display help and module information
+* @param path which path of the site we're displaying help
+* @param arg array that holds the current path as would be returned from arg() function
+* @return help text for the path
+*/
+function nightly_help($path, $arg) {
+  $output = '';
+  switch ($path) {
+    case "admin/help#nightly":
+      $output = '<p>'.  t("A block module that displays and controls nightly builds.") .'</p>';
+      break;
+  }
+  return $output;
+} // function onthisdate_help
+
+function nightly_perm()
+{
+	return array('access nightly builds','create nightly buids');
+}
+function nightly_all()
+{
+	return "Hola mundo";
+}
+
+function nightly_node_info()
+{
+	return array(
+    'nightly' => array(
+      'name' => t('nightly'),
+      'module' => 'nightly',
+      'description' => "This is an example node type with a few fields.",
+    )
+  );
+
+}
+
+function node_example_access($op, $node, $account) {
+
+  if ($op == 'create') {
+    // Only users with permission to do so may create this node type.
+    return user_access('create nightly', $account);
+  }
+}
+
+function nightly_menu() {
+
+  $items = array();
+  //this is added for this current tutorial.
+  $items['nightly'] = array(
+    'title' => 'Nightly builds',
+    'page callback' => 'nightly_all',
+    'access arguments' => array('Access nightly builds'),
+    'type' => MENU_CALLBACK
+  );
+
+  return $items;
+}
+
+function nightly_form(&$node) {
+  $type = node_get_types('type', $node);
+
+  // We need to define form elements for the node's title and body.
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => check_plain($type->title_label),
+    '#required' => TRUE,
+    '#default_value' => $node->title,
+    '#weight' => -5
+  );
+  // We want the body and filter elements to be adjacent. We could try doing
+  // this by setting their weights, but another module might add elements to the
+  // form with the same weights and end up between ours. By putting them into a
+  // sub-array together, we're able force them to be rendered together.
+  $form['body_filter']['body'] = array(
+    '#type' => 'textarea',
+    '#title' => check_plain($type->body_label),
+    '#default_value' => $node->body,
+    '#required' => FALSE
+  );
+  $form['body_filter']['filter'] = filter_form($node->format);
+
+  // NOTE in node_example there is some addition code here not needed for this simple node-type
+
+  return $form;
+}
+?>
